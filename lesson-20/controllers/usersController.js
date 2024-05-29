@@ -135,7 +135,7 @@ module.exports = {
       profileImg: req.body.profileImg,
     };
     // 폼 파라미터로 사용자 생성
-    User.findById(userId, {
+    User.findByIdAndUpdate(userId, {
       $set: userParams
     })
       .then((user) => {
