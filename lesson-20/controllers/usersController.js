@@ -108,6 +108,46 @@ module.exports = {
   /**
    * @TODO: edit, update 액션 추가
    */
+  edit: (req, res, next) => {
+    let userId = req.params.id; // URL의 매개변수
+    User.findById(userId)
+    .then(user => {
+      res.render("users/edit", {
+        user: user
+      });
+      next(); //추가
+    })
+    .catch(error =>{
+      console.log(`Error fetching User by Id: ${error.message}`);
+      next(error);
+    });
+  },
+  update: (req, res, next) => {
+    let userId = req.params.id,
+    userParams = {
+      name: {
+        first: req.body.first,
+        last: req.body.last,
+      },
+      email: req.body.email,
+      username: req.body.username,
+      password: req.body.password,
+      profileImg: req.body.profileImg,
+    };
+    // 폼 파라미터로 사용자 생성
+    User.findById(userId, {
+      $set: userParams
+    })
+      .then((user) => {
+        res.locals.redirect = `/users/${userId}`;
+        res.locals.user = user;
+        next();
+      })
+      .catch((error) => {
+        console.log(`Error updating user: ${error.message}`);
+        next(error);
+      });
+  },
 
   /**
    * Listing 20.9 (p. 298)
@@ -116,4 +156,16 @@ module.exports = {
   /**
    * @TODO: delete 액션 추가
    */
+  delete: (req, res, next) => {
+    let userId = req.params.id; // URL의 매개변수
+    User.findByIdAndRemove(userId)
+    .then(() => {
+      res.locals.redirect = "/users";
+      next(); //추가
+    })
+    .catch(error =>{
+      console.log(`Error deleting User by Id: ${error.message}`);
+      next(error);
+    });
+  },
 };
